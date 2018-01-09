@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<title>Oil Search Game</title>
+	<meta name="viewport" content="user-scalable=no, initial-scale=1,maximum-scale=1" />
+	<link rel="shortcut icon" type="text/css" href="./client/img/pump1.png">
+	<link rel="stylesheet" type="text/css" href="./client/css/main.css">
+	<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+	<script type="text/javascript" src="./client/js/jquery.min.js"></script>
+	<script type="text/javascript" src=" https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.4/lodash.min.js"></script>
+	<script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
+</head>
+<body class="body">
+<div class="container clear-fix">
+	<form id = "game" style="display: block;">
+		<div class="col-lg-4 col-md-4 col-sm-4">
+			<div class="player_info">
+				<div class="col-lg-6 status">
+          <h2>Player 1</h2>
+					<ul class="pump_status">
+						<li>
+							<img src="client/img/pump1.png">
+							<label id="1count0"> 0 </label>
+							<span>/30</span>
+						</li>
+						<li>
+							<img src="client/img/pump2.png">
+							<label id="1count1"> 0 </label>
+							<span>/30</span>
+						</li>
+						<li>
+							<img src="client/img/pump3.png">
+							<label id="1count2"> 0 </label>
+							<span>/30</span>
+						</li>
+						<li>
+							<img src="client/img/pump4.png">
+							<label id="1count3"> 0 </label>
+							<span>/30</span>
+						</li>
+						<li>
+							<img src="client/img/pump5.png">
+							<label id="1count4"> 0 </label>
+							<span>/30</span>
+						</li>
+						<li>
+							<img src="client/img/pump6.png">
+							<label id="1count5"> 0 </label>
+							<span>/30</span>
+						</li>
+						<li>
+							<img src="client/img/pump7.png">
+							<label id="1count6"> 0 </label>
+							<span>/30</span>
+						</li>
+						<li>
+							<img src="client/img/truck.png">
+							<label id="capacity"> 0 </label>
+							<span>/20</span>
+						</li>
+					</ul>
+				</div>
+        <div class="col-lg-6 status">
+          <h2>Player 2</h2>
+          <ul class="pump_status">
+            <li>
+              <img src="client/img/pump1.png">
+              <label id="2count0"> 0 </label>
+              <span>/30</span>
+            </li>
+            <li>
+              <img src="client/img/pump2.png">
+              <label id="2count1"> 0 </label>
+              <span>/30</span>
+            </li>
+            <li>
+              <img src="client/img/pump3.png">
+              <label id="2count2"> 0 </label>
+              <span>/30</span>
+            </li>
+            <li>
+              <img src="client/img/pump4.png">
+              <label id="2count3"> 0 </label>
+              <span>/30</span>
+            </li>
+            <li>
+              <img src="client/img/pump5.png">
+              <label id="2count4"> 0 </label>
+              <span>/30</span>
+            </li>
+            <li>
+              <img src="client/img/pump6.png">
+              <label id="2count5"> 0 </label>
+              <span>/30</span>
+            </li>
+            <li>
+              <img src="client/img/pump7.png">
+              <label id="2count6"> 0 </label>
+              <span>/30</span>
+            </li>
+            <li>
+              <img src="client/img/truck.png">
+              <label id="capacity"> 0 </label>
+              <span>/20</span>
+            </li>
+          </ul>
+        </div>
+
+        <div class="total_collection1">
+          <div><h4>Total Collected </h4></div>
+          <div class="total"><label id="total"> 1500 </label></div>
+        </div>
+
+        <div class="total_collection2">
+          <div><h4>Total Collected </h4></div>
+          <div class="total"><label id="total"> 1500 </label></div>
+        </div>
+
+				<div class="drill_btn">
+					<button id="drill_btn" type="button"> Drill</button>
+				</div>
+				<div class="fill_up_btn">
+					<button id="fillUp_btn" " type="button"> Fill Up</button>
+				</div>
+				<div class="refinery_btn">
+					<button id="refinery_btn" type="button"> Refinery </button>
+				</div>
+				
+			</div>
+		</div>	
+		<div class="center_stage col-lg-7 col-md-7 col-sm-7">
+			<canvas id="scene" width="640" height="640" style="border:1px solid #000000;"></canvas>
+		</div>
+	</form>
+  <!-- <form id = "login" style="text-align: center;">
+    <div style="margin-top: 150px;">
+      <h1 class="title"> What's your nickname?</h1>
+      <input class="usernameInput" id="username" type="text" maxlength = "14"/>
+      <div style="margin-top: 20px;">
+        <button id="login" type="button"> Login</button>
+      </div>
+    </div>
+  </form> -->
+</div>
+<script>
+  /*when the login button is clicked*/
+// var username = "";
+// var loginBtnClick = document.getElementById("login"); 
+// loginBtnClick.onclick = function() {
+//   if (!document.getElementById("username").value)
+//     return ;
+//   else {
+//     username = document.getElementById("username").value;
+//     socket.emit("login", {username: username});
+//     document.getElementById("game").style.display = 'block';
+//     document.getElementById("login").style.display = 'none';
+//   }
+// }
+
+var width = 640;
+var height = 640;
+var cellSize = 40;
+var img_width = 30;
+var img_height = 30;
+
+var Img = {};
+Img.player = new Image();
+Img.player.src = '/client/img/truck.png';
+
+Img.pump1 = new Image();
+Img.pump1.src = '/client/img/pump1.png';
+Img.pump2 = new Image();
+Img.pump2.src = '/client/img/pump2.png';
+Img.pump3 = new Image();
+Img.pump3.src = '/client/img/pump3.png';
+Img.pump4 = new Image();
+Img.pump4.src = '/client/img/pump4.png';
+Img.pump5 = new Image();
+Img.pump5.src = '/client/img/pump5.png';
+Img.pump6 = new Image();
+Img.pump6.src = '/client/img/pump6.png';
+Img.pump7 = new Image();
+Img.pump7.src = '/client/img/pump7.png';
+
+Img.empty = new Image();
+Img.empty.src = '/client/img/empty.png';
+Img.adjacent = new Image();
+Img.adjacent.src = '/client/img/adjacent.png';
+Img.city = new Image();
+Img.city.src = '/client/img/city.png';
+Img.refinery = new Image();
+Img.refinery.src = '/client/img/refinery.png';
+
+document.getElementById("scene").style.cursor = "pointer";
+
+/*drawing gird*/
+var canvas = document.getElementById("scene");
+var ctx = canvas.getContext("2d");
+  ctx.clearRect(0,0,width,height);
+  ctx.strokeStyle = "#ddd";
+  for(i=0; i<=width; i+=cellSize) {
+  ctx.moveTo(i,0); ctx.lineTo(i, height);ctx.stroke();
+}
+for(i=0; i<=height; i+=cellSize) {
+  ctx.moveTo(0,i); ctx.lineTo(width, i);ctx.stroke();
+}
+
+/*detect position of mouse*/
+$("#scene").click(function(eventObject) {
+  var rect = canvas.getBoundingClientRect();
+  var mouseX = Math.floor((eventObject.clientX - rect.left) / 40);
+  var mouseY = Math.floor((eventObject.clientY - rect.top)/ 40);
+  mousePos = mouseX + mouseY * 16;
+
+  socket.emit("removeClick", {mousePos: mousePos});
+});
+
+/*when the drill button is clicked*/
+var drillBtnClick = document.getElementById('drill_btn'); 
+drillBtnClick.onclick = function() {
+  socket.emit('drillClick', {inputId: 'dirllClick'});
+}
+var refineryBtnClick = document.getElementById('refinery_btn');
+refineryBtnClick.onclick = function() {
+  if (document.getElementById('total').innerHTML >= 500) {
+    alert("If you install refinery, total collection will be reduced as 500.");
+    socket.emit('refineryClick', {inputId: 'refineryClick'});
+  }
+  else {
+    alert("You can't install refinery because total collection is less than 500.")
+    return;
+  }
+}
+
+document.onkeydown = function(event){
+  if (event.keyCode === 39)   
+    socket.emit('keyPress',{inputId:'right'});
+  else if(event.keyCode === 40) 
+    socket.emit('keyPress',{inputId:'down'});
+  else if(event.keyCode === 37) 
+    socket.emit('keyPress',{inputId:'left'});
+  else if(event.keyCode === 38) 
+    socket.emit('keyPress',{inputId:'up'});
+}
+
+var socket = io();
+socket.on('connect', function() {
+  var d = new Date();
+  var time = d.getTime();
+  localStorage.setItem(socket.id, time);
+  socket.emit("playerList", {time: time});
+
+  var playerId = socket.id;
+  /*drawing Map*/
+  socket.on('MapData', function(data) {
+    var images = {
+      1: '/client/img/pump1.png',
+      2: '/client/img/pump2.png',
+      3: '/client/img/pump3.png',
+      4: '/client/img/pump4.png',
+      5: '/client/img/pump5.png',
+      6: '/client/img/pump6.png',
+      7: '/client/img/pump7.png',
+      8: '/client/img/adjacent.png',
+      9: '/client/img/empty.png',
+      10: '/client/img/city.png',
+      11: 'client/img/refinery.png'
+    }
+    for (let i = 0; i < data.length; i++) {
+      let x = i%16*40+5;
+      let y = parseInt(i/16)*40+5;
+      if (images[data[i]]) {
+        let img = new Image();
+        img.src = images[data[i]];
+        img.onload = () => {
+          ctx.drawImage(img, x, y, img_width, img_height);
+        }
+      }
+    }
+  });
+  socket.on('newPositions',function(res) {
+    data = res.pack;
+      for (var i = 0 ; i < data.length; i++) {
+        ctx.clearRect(data[i].old_x, data[i].old_y, img_width, img_height);
+        if (data[i].detectOldPos == 8)
+          ctx.drawImage(Img.city, data[i].old_x, data[i].old_y, img_width, img_height);
+        if (data[i].detectOldPos == 9)
+          ctx.drawImage(Img.refinery, data[i].old_x, data[i].old_y, img_width, img_height);
+        if (data[i].detectOldPos == 1)
+          ctx.drawImage(Img.pump1, data[i].old_x, data[i].old_y, img_width, img_height);  
+        if (data[i].detectOldPos == 2)
+          ctx.drawImage(Img.pump2, data[i].old_x, data[i].old_y, img_width, img_height);  
+        if (data[i].detectOldPos == 3)
+          ctx.drawImage(Img.pump3, data[i].old_x, data[i].old_y, img_width, img_height);  
+        if (data[i].detectOldPos == 4)
+          ctx.drawImage(Img.pump4, data[i].old_x, data[i].old_y, img_width, img_height);  
+        if (data[i].detectOldPos == 5)
+          ctx.drawImage(Img.pump5, data[i].old_x, data[i].old_y, img_width, img_height);  
+        if (data[i].detectOldPos == 6)
+          ctx.drawImage(Img.pump6, data[i].old_x, data[i].old_y, img_width, img_height);  
+        if (data[i].detectOldPos == 7)
+          ctx.drawImage(Img.pump7, data[i].old_x, data[i].old_y, img_width, img_height);  
+        ctx.drawImage(Img.player, data[i].new_x, data[i].new_y, img_width, img_height);
+      }
+  });
+
+  socket.on('pending_pump', function(res) {
+    pending_pump = res.pending_pump;
+    for(var k in pending_pump) {
+      var x = k%16*40 + 5;
+      var y = parseInt(k/16)*40 + 5;
+      ctx.clearRect(x, y, img_width, img_height);
+      if (pending_pump[k].sec > 0) {
+      ctx.font = "20px verdama";
+        ctx.fillText(pending_pump[k].sec, x + 10, y + 18, img_width, img_height);
+      } else {
+        if (pending_pump[k].square <= 7) {
+          ctx.drawImage(Img['pump' + pending_pump[k].square], x, y, img_width, img_height);
+          socket.emit('stopPending', {pumpNumber: pending_pump[k].square, pos: k});
+        }
+        switch (pending_pump[k].square) {
+          case 8:
+            ctx.drawImage(Img.adjacent, x, y, img_width, img_height);
+            break;
+          case 9:
+            ctx.drawImage(Img.empty, x, y, img_width, img_height);
+            break;
+        }
+      }
+    }
+  });
+
+  socket.on('pending_refinery', function(res){
+    pending_refinery = res.pending_refinery;
+    for (var i in pending_refinery) {
+      var x = i%16*40 + 5;
+      var y = parseInt(i/16)*40 + 5;
+      ctx.clearRect(x, y, img_width, img_height);
+
+      if (pending_refinery[i].sec > 0) {
+        ctx.fillText(pending_refinery[i].sec, x + 10, y + 18, img_width, img_height);
+      } else {
+        ctx.drawImage(Img.refinery, x, y, img_width, img_height);
+      }
+    }
+  });
+
+  socket.on('pending_remove', function(res) {
+    pending_remove = res.pending_remove;
+    for (var i in pending_remove) {
+      var x = i%16*40 + 5;
+      var y = parseInt(i/16)*40 + 5;
+      ctx.clearRect(x, y, img_width, img_height);
+
+      if (pending_remove[i].sec > 0) {
+        ctx.fillText(pending_remove[i].sec, x + 10, y + 18, img_width, img_height);
+      } else {
+        ctx.clearRect(x, y, img_width, img_height);
+      }
+    }
+  });
+
+  socket.on('countingPump', function(data) {
+    // console.log(playerId);
+    // for (var i = 0; i < 7; i++) {
+    //   var socketId = data.pumpCount[i].id.slice(2, 22);
+    //   var player = localStorage.getItem(socketId);
+    //   // console.log(data.playerList);
+    //   if (data.playerList.indexOf(player) == 0){
+    //     // console.log("called")
+    //     document.getElementById('1count'+ i).innerHTML = data.pumpCount[i].count;
+    //   }
+    //   if (data.playerList.indexOf(player) == 1) {
+    //     document.getElementById('2count'+ i).innerHTML = data.pumpCount[i].count;
+    //   }
+    // }
+  });  
+});
+
+
+</script>	
+</body>
+</html>

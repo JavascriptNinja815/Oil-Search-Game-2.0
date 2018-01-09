@@ -1,0 +1,85 @@
+.body {
+	background-color: #ecf2f7;
+}
+form {
+	background: white;
+    margin-top: 5%;
+    box-shadow: 4px 1px 2px 5px rgba(171,171,171,0.5);
+    padding-top: 2%;
+    height: 720px;
+}
+img {
+	width: 35px;
+	margin-right: 20px;
+}
+li {
+	list-style: none;
+    margin-top: 5px;
+}
+button {
+	background-color: #cfead0;
+    padding: 10px 10px;
+    text-align: center;
+    display: inline-block;
+    border-radius: 35px;
+    width: 215px;
+    outline: none;
+}
+h2 {
+    margin-left: 20px;
+}
+.title {
+    margin-top: 100px;
+}
+.status {
+    display: block;
+}
+.pump_status{
+    font-size: 18px;
+    margin-left: -20px;
+}
+.total {
+    text-align: center;
+}
+.total_collection1 {
+    font-size: 22px;
+    position: absolute;
+    left: 30px;
+    top: 400px;
+}
+.total_collection2
+ {
+    font-size: 22px;
+    position: absolute;
+    right: 35px;
+    top: 400px;
+}
+
+.drill_btn {
+    font-size: 15px;
+    text-align: center;
+    position: absolute;
+    left: 80px;
+    top: 480px;
+}
+.fill_up_btn {
+  font-size: 15px;
+    text-align: center;
+    position: absolute;
+    left: 80px;
+    top: 530px;
+}
+.refinery_btn {
+    font-size: 15px;
+    text-align: center;
+    position: absolute;
+    left: 80px;
+    top: 580px;
+}
+
+.usernameInput {
+    width: 25%;
+    height: 57px;
+    margin-top: 20px;
+    font-size: 30px;
+}

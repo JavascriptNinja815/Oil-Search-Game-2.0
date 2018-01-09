@@ -1,0 +1,19 @@
+{
+  "name": "Oil_Search_Game",
+  "version": "2.0",
+  "description": "This is a multiPlayer game based on socket.io, Canvas",
+  "main": "main.js",
+  "dependencies": {
+    "express": "^4.13.4",
+    "socket.io": "^1.4.5"
+  },
+  "engines": {
+    "node": "4.1.x"
+  },
+  "devDependencies": {},
+  "scripts": {
+	"start": "node main.js"
+  },
+  "author": "JavascriptNinja815",
+  "license": "ISC"
+}
